@@ -30,10 +30,16 @@ shinyServer(function(input, output, session) {
                                             rec()$conflicts %>% 
                                       str_replace_all("\\n", "<li>"))))
     
+    choices <- reactiveVal({
+        colnames(todo[9:22]) %>% 
+            str_subset("other*.", negate = TRUE)
+    })
+    
 output$select_cons <- renderUI({
-    choices <- colnames(todo[9:22]) %>% 
-        str_subset("other*.", negate = TRUE) %>% 
-        c("Other:")
+    choices <-  c(choices(), "Other:")
+    # choices <- colnames(todo[9:22]) %>% 
+    #     str_subset("other*.", negate = TRUE) %>% 
+    #     c("Other:")
     
     div(id = incr(),
     checkboxGroupInput("conflicts",
@@ -49,8 +55,14 @@ observeEvent(input$submit, {
     choices <- colnames(todo[9:22]) %>% 
         str_subset("other*.", negate = TRUE)
     
-    # other1 <- colnames(todo[7:20]) %>% 
-    #     str_subset("other*.", negate = FALSE)[1]
+    other1 <- which(colnames(todo) %>%
+        str_detect("other*.", negate = FALSE))[1]
+    
+    if ("Other:" %in% input$conflicts) {
+        gs_edit_cells(sheet, "new_conflicts", input = input$othertype, anchor = paste0("R1C",other1))
+        gs_edit_cells(sheet, "new_conflicts", input = 1, anchor = paste0("R",nrow(conflicts) - nrow(todo) + incr() + 1, "C",other1))
+        choices(c(choices(), input$othertype))
+    }
     
     newvals <- as.numeric(choices %in% input$conflicts)
     
