@@ -14,7 +14,7 @@ shinyServer(function(input, output, session) {
 
     sheet <- gs_title("new_conflicts")
     
-    conflicts <- gs_read(sheet, ws = "new_conflicts")
+    conflicts <- gs_read(sheet, ws = "conflicts_1203")
     
     todo <- filter(conflicts, is.na(done))
     
