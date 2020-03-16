@@ -88,9 +88,7 @@ observeEvent(input$submit, {
 
 observeEvent(input$skip, {
     
-    
-    newvals <- as.numeric(choices %in% input$conflicts)
-    
+
 
     gs_edit_cells(sheet, "conflicts_1203", input = 0, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
     gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
