@@ -16,7 +16,7 @@ shinyServer(function(input, output, session) {
     
     conflicts <- gs_read(sheet, ws = "conflicts_1203")
     
-    todo <- filter(conflicts, is.na(done))
+    todo <- filter(conflicts, done != 1|is.na(done))
     
     incr <- reactiveVal(1)
     
@@ -26,9 +26,19 @@ shinyServer(function(input, output, session) {
     output$doi <- renderUI(HTML(paste0("<a href='https://dx.doi.org/", rec()$doi, "', target='_new'>Full Text")))
     # output$doi <- renderText(rec()$doi)
     
-    output$con_text <- renderUI(HTML(paste0("<li>",
-                                            rec()$conflicts %>% 
-                                      str_replace_all("\\n", "<li>"))))
+    output$con_text <- renderUI(
+        
+        # text <- rec()$conflicts%>% 
+        #     str_replace_all("\\n", "<li>") %>% 
+        #     gsub("([Cc]onflict.{,10}[Ii]nterest)", "<mark>\\1</mark>", .)
+        
+        HTML(rec()$conflicts%>% 
+                 str_replace_all("\\n", "<li>") %>% 
+                 gsub("(([Cc]onflict|[Dd]eclaration).{,10}[Ii]nterests?)", "<mark>\\1</mark>", .))
+        # HTML(paste0("<li>",
+        #                                     rec()$conflicts %>% 
+        #                               str_replace_all("\\n", "<li>")))
+        )
     
     choices <- reactiveVal({
         colnames(todo[9:22]) %>% 
@@ -68,8 +78,22 @@ observeEvent(input$submit, {
     
     rowanchor <- paste0("I", nrow(conflicts) - nrow(todo) + incr() + 1)
     
-    gs_edit_cells(sheet, "new_conflicts", input = newvals, anchor = rowanchor, byrow = TRUE)
-    gs_edit_cells(sheet, "new_conflicts", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    gs_edit_cells(sheet, "conflicts_1203", input = newvals, anchor = rowanchor, byrow = TRUE)
+    gs_edit_cells(sheet, "conflicts_1203", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    
+    newval <- incr()+1
+    incr(newval)
+})
+
+observeEvent(input$skip, {
+    
+    
+    newvals <- as.numeric(choices %in% input$conflicts)
+    
+
+    gs_edit_cells(sheet, "conflicts_1203", input = 0, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
     
     newval <- incr()+1
     incr(newval)

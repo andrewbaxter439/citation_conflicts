@@ -12,10 +12,17 @@ shinyUI(fluidPage(
              background-color: #adcfeb;
              padding: 10px;
              overflow-wrap: break-word;
+             font-size: 12pt;
         }
         ::selection {
-        background: #FF00CC;
-        color: #FFFFFF
+             background: #FF00CC;
+             color: #FFFFFF
+        }
+        #ref {
+        }
+        mark {
+             background-color: #00FF00;
+             color: #FFFFFF
         }'
     ))),
     
@@ -36,10 +43,15 @@ shinyUI(fluidPage(
     
     column(4,
            fluidRow(class = "boxsection",
-                    style = "min-height: 90vh",
+                    style = "min-height: 60vh",
                     uiOutput("select_cons"),
-                    actionButton("submit", "Submit")
+                    actionButton("submit", "Submit")),
+           fluidRow(class = "boxsection",
+                    stype = "min-height: 20vh",
+                    textInput("comments", "Comments:"),
+                    actionButton("skip", "Skip")
            )
+           
     )
 )
 )
