@@ -1,13 +1,6 @@
 library(shiny)
-library(readr)
-library(dplyr)
+library(tidyverse)
 library(googlesheets)
-library(httr)
-library(rscopus)
-library(stringr)
-library(ggplot2)
-library(tidyr)
-library(SPHSUgraphs)
 
 
 shinyServer(function(input, output, session) {
