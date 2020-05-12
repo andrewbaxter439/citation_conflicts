@@ -33,7 +33,7 @@ shinyUI(fluidPage(
     
     column(7,
            fluidRow(class = "boxsection",
-                    style = "min-height: 90vh",
+                    style = "min-height: 80vh",
                     h2(textOutput("ref")),
                     # h3(textOutput("doi")),
                     htmlOutput("doi"),

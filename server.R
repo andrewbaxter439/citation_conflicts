@@ -7,7 +7,8 @@ shinyServer(function(input, output, session) {
 
     sheet <- gs_title("new_conflicts")
     
-    conflicts <- gs_read(sheet, ws = "conflicts_1203")
+    conflicts <- gs_read(sheet, ws = "conflicts_second_check")
+    # conflicts <- gs_read(sheet, ws = "conflicts_1203")
     
     todo <- filter(conflicts, done != 1|is.na(done))
     
@@ -62,8 +63,10 @@ observeEvent(input$submit, {
         str_detect("other*.", negate = FALSE))[1]
     
     if ("Other:" %in% input$conflicts) {
-        gs_edit_cells(sheet, "new_conflicts", input = input$othertype, anchor = paste0("R1C",other1))
-        gs_edit_cells(sheet, "new_conflicts", input = 1, anchor = paste0("R",nrow(conflicts) - nrow(todo) + incr() + 1, "C",other1))
+        gs_edit_cells(sheet, "conflicts_second_check", input = input$othertype, anchor = paste0("R1C",other1))
+        gs_edit_cells(sheet, "conflicts_second_check", input = 1, anchor = paste0("R",nrow(conflicts) - nrow(todo) + incr() + 1, "C",other1))
+        # gs_edit_cells(sheet, "new_conflicts", input = input$othertype, anchor = paste0("R1C",other1))
+        # gs_edit_cells(sheet, "new_conflicts", input = 1, anchor = paste0("R",nrow(conflicts) - nrow(todo) + incr() + 1, "C",other1))
         choices(c(choices(), input$othertype))
     }
     
@@ -71,10 +74,14 @@ observeEvent(input$submit, {
     
     rowanchor <- paste0("I", nrow(conflicts) - nrow(todo) + incr() + 1)
     
-    gs_edit_cells(sheet, "conflicts_1203", input = newvals, anchor = rowanchor, byrow = TRUE)
-    gs_edit_cells(sheet, "conflicts_1203", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
-    gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    gs_edit_cells(sheet, "conflicts_second_check", input = newvals, anchor = rowanchor, byrow = TRUE)
+    gs_edit_cells(sheet, "conflicts_second_check", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    gs_edit_cells(sheet, "conflicts_second_check", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
     
+    # gs_edit_cells(sheet, "conflicts_1203", input = newvals, anchor = rowanchor, byrow = TRUE)
+    # gs_edit_cells(sheet, "conflicts_1203", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    # gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+
     newval <- incr()+1
     incr(newval)
 })
