@@ -37,8 +37,9 @@ shinyUI(fluidPage(
                     h2(textOutput("ref")),
                     # h3(textOutput("doi")),
                     htmlOutput("doi"),
-                    htmlOutput("con_text")
+                    htmlOutput("con_text"),
                     # textOutput("con_text")
+           # DT::dataTableOutput("df")
                     )),
     
     column(4,
@@ -50,7 +51,7 @@ shinyUI(fluidPage(
                     stype = "min-height: 20vh",
                     textInput("comments", "Comments:"),
                     actionButton("skip", "Skip")
-           )
+           ),
            
     )
 )

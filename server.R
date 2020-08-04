@@ -1,16 +1,16 @@
 library(shiny)
 library(tidyverse)
-library(googlesheets)
+library(googlesheets4)
 
 
 shinyServer(function(input, output, session) {
 
-    sheet <- gs_title("new_conflicts")
+    sheet <- "https://docs.google.com/spreadsheets/d/1Dg1b2GwAxX07zXZQaO2Rb9U8Of3xhRwn25IULYRNAh4/"
     
-    conflicts <- gs_read(sheet, ws = "conflicts_second_check")
-    # conflicts <- gs_read(sheet, ws = "conflicts_1203")
+    # conflicts <- read_sheet(sheet, sheet = "conflicts_second_check")
+    conflicts <- read_sheet(sheet, sheet = "conflicts_1203")
     
-    todo <- filter(conflicts, done != 1|is.na(done))
+    todo <- filter(conflicts, done != 1|is.na(done)|!is.na(Reference))
     
     incr <- reactiveVal(1)
     
@@ -70,17 +70,21 @@ observeEvent(input$submit, {
         choices(c(choices(), input$othertype))
     }
     
-    newvals <- as.numeric(choices %in% input$conflicts)
+    newvals <- as.data.frame(t(as.numeric(choices %in% input$conflicts)))
     
-    rowanchor <- paste0("I", nrow(conflicts) - nrow(todo) + incr() + 1)
+    rownum <- nrow(conflicts) - nrow(todo) + incr() + 1
     
-    gs_edit_cells(sheet, "conflicts_second_check", input = newvals, anchor = rowanchor, byrow = TRUE)
-    gs_edit_cells(sheet, "conflicts_second_check", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
-    gs_edit_cells(sheet, "conflicts_second_check", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    range <- paste0("I", rownum, ":V", rownum)
     
-    # gs_edit_cells(sheet, "conflicts_1203", input = newvals, anchor = rowanchor, byrow = TRUE)
-    # gs_edit_cells(sheet, "conflicts_1203", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
-    # gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    # gs_edit_cells(sheet, "conflicts_second_check", input = newvals, anchor = rowanchor, byrow = TRUE)
+    # gs_edit_cells(sheet, "conflicts_second_check", input = 1, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    # gs_edit_cells(sheet, "conflicts_second_check", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    
+    comments <- input$comments
+    
+    range_write(sheet, sheet = "conflicts_1203", data = tibble(newvals), range = range, col_names = FALSE)
+    range_write(sheet, sheet = "conflicts_1203", data = tibble(0), range = paste0("W", rownum), col_names = FALSE)
+    range_write(sheet, sheet = "conflicts_1203", data = tibble(comments), range = paste0("X",  rownum), col_names = FALSE)
 
     newval <- incr()+1
     incr(newval)
@@ -88,13 +92,16 @@ observeEvent(input$submit, {
 
 observeEvent(input$skip, {
     
+    rownum <- nrow(conflicts) - nrow(todo) + incr() + 1
 
-
-    gs_edit_cells(sheet, "conflicts_1203", input = 0, anchor = paste0("W",  nrow(conflicts) - nrow(todo) + incr() + 1))
-    gs_edit_cells(sheet, "conflicts_1203", input = input$comments, anchor = paste0("X",  nrow(conflicts) - nrow(todo) + incr() + 1))
+    comments <- input$comments
+    
+    range_write(sheet, sheet = "conflicts_1203", data = tibble(0), range = paste0("W", rownum), col_names = FALSE)
+    range_write(sheet, sheet = "conflicts_1203", data = tibble(comments), range = paste0("X",  rownum), col_names = FALSE)
     
     newval <- incr()+1
     incr(newval)
 })
 
+output$df <- DT::renderDataTable(head(todo %>% select(Reference)))
 })
