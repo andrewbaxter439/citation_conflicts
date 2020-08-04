@@ -10,7 +10,8 @@ shinyServer(function(input, output, session) {
     # conflicts <- read_sheet(sheet, sheet = "conflicts_second_check")
     conflicts <- read_sheet(sheet, sheet = "conflicts_1203")
     
-    todo <- filter(conflicts, done != 1|is.na(done)|!is.na(Reference))
+    todo <- filter(conflicts, done != 1|is.na(done)) %>% 
+        filter(!is.na(Reference))
     
     incr <- reactiveVal(1)
     
