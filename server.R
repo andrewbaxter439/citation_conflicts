@@ -83,7 +83,7 @@ observeEvent(input$submit, {
     
     comments <- input$comments
     
-    range_write(sheet, sheet = "conflicts_1203", data = tibble(newvals), range = range, col_names = FALSE)
+    range_write(sheet, sheet = "conflicts_1203", data = newvals, range = range, col_names = FALSE)
     range_write(sheet, sheet = "conflicts_1203", data = tibble(1), range = paste0("W", rownum, ":W", rownum), col_names = FALSE)
     range_write(sheet, sheet = "conflicts_1203", data = tibble(comments), range = paste0("X",  rownum), col_names = FALSE)
 
