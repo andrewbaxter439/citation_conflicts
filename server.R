@@ -5,7 +5,7 @@ library(googlesheets4)
 
 shinyServer(function(input, output, session) {
 
-    sheet <- "https://docs.google.com/spreadsheets/d/1Dg1b2GwAxX07zXZQaO2Rb9U8Of3xhRwn25IULYRNAh4/"
+    sheet <- stop("Google sheets source not set (substitute url in place of this error message in code)")
     
     # conflicts <- read_sheet(sheet, sheet = "conflicts_second_check")
     conflicts <- read_sheet(sheet, sheet = "conflicts_1203")
